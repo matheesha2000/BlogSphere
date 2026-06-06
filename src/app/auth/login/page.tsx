@@ -21,7 +21,7 @@ export default function LoginPage() {
       </div>
 
       {/* White card containing the form */}
-      <div className="bg-white rounded-xl border border-gray-200 p-8">
+      <div className="bg-white rounded-xl border shadow-md border-gray-200 p-8">
         <LoginForm />
 
         {/* Switch to signup */}

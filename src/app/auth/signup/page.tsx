@@ -19,7 +19,7 @@ export default function SignupPage() {
       </div>
 
       {/* White card */}
-      <div className="bg-white rounded-xl border border-gray-200 p-8">
+      <div className="bg-white rounded-xl border shadow-md border-gray-200 p-8">
         <SignupForm />
 
         {/* Switch to login */}
