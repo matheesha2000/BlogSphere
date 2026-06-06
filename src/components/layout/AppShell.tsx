@@ -1,11 +1,15 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname } from 'next/navigation'
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const isAuthRoute = pathname?.startsWith("/auth") || pathname === "/login";
+  const pathname = usePathname()
+  const isAuthRoute =
+    pathname?.startsWith('/auth') ||
+    pathname === '/login' ||
+    pathname === '/signup'
 
   if (isAuthRoute) {
     return (
@@ -14,26 +18,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           {children}
         </main>
       </div>
-    );
+    )
   }
 
   return (
     <div className="min-h-full flex flex-col">
-      <header className="w-full border-b py-4">
-        <div className="container mx-auto px-4">
-          <Link href="/" className="text-xl font-semibold">
-            BlogSphere
-          </Link>
-        </div>
-      </header>
-
-      <main className="flex-1 container mx-auto">{children}</main>
-
-      <footer className="w-full border-t py-4">
-        <div className="container mx-auto px-4 text-sm text-slate-500">
-          © {new Date().getFullYear()} BlogSphere
-        </div>
-      </footer>
+      <Navbar />
+      <main className="flex-1">{children}</main>
+      <Footer />
     </div>
-  );
+  )
 }
