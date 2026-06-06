@@ -81,17 +81,26 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const supabase = await createClient()
   const query = searchParams.q ?? ''
 
+  // Try with published filter; fall back to all posts if column doesn't exist yet
   let dbQuery = supabase
     .from('posts')
     .select('*, profiles(id, email, full_name)')
-    .eq('published', true)
     .order('created_at', { ascending: false })
+    .limit(12)
 
   if (query) {
     dbQuery = dbQuery.or(`title.ilike.%${query}%,content.ilike.%${query}%`)
   }
 
-  const { data: posts, error } = await dbQuery
+  // First attempt: with published filter
+  let { data: posts, error } = await (dbQuery as typeof dbQuery).eq('published', true)
+
+  // If 'published' column is missing, retry without filter
+  if (error?.code === 'PGRST204' || error?.message?.includes('published')) {
+    const fallback = await dbQuery
+    posts = fallback.data
+    error  = fallback.error
+  }
 
   return (
     <main className="min-h-screen overflow-x-hidden">
