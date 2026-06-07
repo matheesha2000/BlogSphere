@@ -5,8 +5,11 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { useNotification } from '@/components/providers/NotificationProvider'
 
 export default function LoginForm() {
+  const { showNotification } = useNotification()
+
   // Form field state
   const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
@@ -30,13 +33,17 @@ export default function LoginForm() {
     if (error) {
       // Show Supabase error message (e.g. "Invalid login credentials")
       setError(error.message)
+      showNotification(error.message, 'error')
       setLoading(false)
       return
     }
 
-    // Success — redirect to dashboard and refresh server cache
-    router.push('/dashboard')
-    router.refresh()
+    // Success — redirect to dashboard after 3 seconds
+    showNotification('Successfully logged in! Redirecting to dashboard...', 'success')
+    setTimeout(() => {
+      router.push('/dashboard')
+      router.refresh()
+    }, 3000)
   }
 
   // ─── Render ───────────────────────────────────────────────

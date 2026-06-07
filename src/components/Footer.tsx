@@ -7,8 +7,8 @@ const footerLinks = {
     { label: 'Dashboard', href: '/dashboard' },
   ],
   Account: [
-    { label: 'Sign In', href: '/login' },
-    { label: 'Create Account', href: '/signup' },
+    { label: 'Sign In', href: '/auth/login' },
+    { label: 'Create Account', href: '/auth/signup' },
   ],
   Company: [
     { label: 'About', href: '#' },

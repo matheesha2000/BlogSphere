@@ -84,25 +84,44 @@ export default async function SubscribeSuccessPage({ searchParams }: PageProps) 
   }
 
   return (
-    <div className="max-w-md mx-auto px-4 py-24 text-center">
-      <div className="text-5xl mb-6">🎉</div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-3">You&apos;re all set!</h1>
-      <p className="text-gray-500 mb-8">
-        Your subscription is now active. Enjoy unlimited access to all premium content.
-      </p>
-      <div className="flex gap-4 justify-center mt-8">
-        <Link
-          href="/posts"
-          className="inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-violet-600 text-white px-6 py-3 rounded-xl text-sm font-semibold shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
-        >
-          Browse posts
-        </Link>
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center justify-center border border-white/10 bg-white/5 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-white/10 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
-        >
-          Go to dashboard
-        </Link>
+    <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-gray-950 py-12 px-4 sm:px-6 lg:px-8">
+      
+      {/* Animated background blobs */}
+      <div className="absolute inset-0 pointer-events-none select-none">
+        <div className="animate-blob absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-blue-600/20 blur-3xl" />
+        <div className="animate-blob animation-delay-2000 absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-violet-600/20 blur-3xl" />
+        {/* Grid overlay */}
+        <div className="absolute inset-0 animate-grid-scroll"
+          style={{
+            backgroundImage: 'linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px)',
+            backgroundSize: '40px 40px',
+          }}
+        />
+      </div>
+
+      <div className="relative z-10 w-full max-w-md text-center animate-fade-up">
+        {/* Glassmorphic card */}
+        <div className="bg-gray-900/50 backdrop-blur-xl border border-white/10 shadow-2xl rounded-3xl p-8 sm:p-10 text-center">
+          <div className="text-5xl mb-6">🎉</div>
+          <h1 className="text-3xl font-extrabold text-white mb-3 tracking-tight">You&apos;re all set!</h1>
+          <p className="text-gray-300 mb-8">
+            Your subscription is now active. Enjoy unlimited access to all premium content.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+            <Link
+              href="/posts"
+              className="inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-violet-600 text-white px-6 py-3 rounded-xl text-sm font-semibold shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
+            >
+              Browse posts
+            </Link>
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center justify-center border border-white/10 bg-white/5 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-white/10 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
+            >
+              Go to dashboard
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -110,16 +129,34 @@ export default async function SubscribeSuccessPage({ searchParams }: PageProps) 
 
 function ErrorUI({ message }: { message: string }) {
   return (
-    <div className="max-w-md mx-auto px-4 py-24 text-center">
-      <div className="text-5xl mb-6">⚠️</div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-3">Something went wrong</h1>
-      <p className="text-gray-500 mb-8">{message}</p>
-      <Link
-        href="/subscribe"
-        className="inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-violet-600 text-white px-6 py-3 rounded-xl text-sm font-semibold shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 mt-4"
-      >
-        Back to subscribe
-      </Link>
+    <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-gray-950 py-12 px-4 sm:px-6 lg:px-8">
+      {/* Animated background blobs */}
+      <div className="absolute inset-0 pointer-events-none select-none">
+        <div className="animate-blob absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-blue-600/20 blur-3xl" />
+        <div className="animate-blob animation-delay-2000 absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-violet-600/20 blur-3xl" />
+        {/* Grid overlay */}
+        <div className="absolute inset-0 animate-grid-scroll"
+          style={{
+            backgroundImage: 'linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px)',
+            backgroundSize: '40px 40px',
+          }}
+        />
+      </div>
+
+      <div className="relative z-10 w-full max-w-md text-center animate-fade-up">
+        {/* Glassmorphic card */}
+        <div className="bg-gray-900/50 backdrop-blur-xl border border-white/10 shadow-2xl rounded-3xl p-8 sm:p-10 text-center">
+          <div className="text-5xl mb-6">⚠️</div>
+          <h1 className="text-2xl font-bold text-white mb-3">Something went wrong</h1>
+          <p className="text-gray-400 mb-8">{message}</p>
+          <Link
+            href="/subscribe"
+            className="inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-violet-600 text-white px-6 py-3 rounded-xl text-sm font-semibold shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 mt-4"
+          >
+            Back to subscribe
+          </Link>
+        </div>
+      </div>
     </div>
   )
 }

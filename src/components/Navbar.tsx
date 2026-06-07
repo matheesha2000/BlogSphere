@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { useUser } from '@/hooks/useUserhook/useUser'
 import { createClient } from '@/lib/supabase/client'
+import { useNotification } from '@/components/providers/NotificationProvider'
 
 const NAV_LINKS = [
   { label: 'Home', href: '/' },
@@ -14,6 +15,7 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const { user, loading } = useUser()
+  const { showNotification } = useNotification()
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const router   = useRouter()
@@ -29,6 +31,7 @@ export default function Navbar() {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
+    showNotification('Successfully signed out.', 'success')
     router.push('/')
     router.refresh()
   }
@@ -184,14 +187,14 @@ export default function Navbar() {
                 ) : (
                   <>
                     <Link
-                      href="/login"
+                      href="/auth/login"
                       onClick={() => setMenuOpen(false)}
                       className="flex items-center px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
                     >
                       Log in
                     </Link>
                     <Link
-                      href="/signup"
+                      href="/auth/signup"
                       onClick={() => setMenuOpen(false)}
                       className="flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 transition-all"
                     >

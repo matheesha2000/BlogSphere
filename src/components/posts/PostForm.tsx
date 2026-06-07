@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { Post } from '@/types'
+import { useNotification } from '@/components/providers/NotificationProvider'
 
 interface PostFormProps {
   mode: 'create' | 'edit'
@@ -11,6 +12,7 @@ interface PostFormProps {
 
 export default function PostForm({ mode, post }: PostFormProps) {
   const router = useRouter()
+  const { showNotification } = useNotification()
   const [title, setTitle] = useState(post?.title || '')
   const [content, setContent] = useState(post?.content || '')
   const [isPremium, setIsPremium] = useState(post?.is_premium || false)
@@ -23,8 +25,16 @@ export default function PostForm({ mode, post }: PostFormProps) {
     e.preventDefault()
     setError('')
 
-    if (!title.trim()) { setError('Title is required'); return }
-    if (!content.trim()) { setError('Content is required'); return }
+    if (!title.trim()) {
+      setError('Title is required')
+      showNotification('Title is required', 'warning')
+      return
+    }
+    if (!content.trim()) {
+      setError('Content is required')
+      showNotification('Content is required', 'warning')
+      return
+    }
 
     setLoading(true)
 
@@ -42,13 +52,19 @@ export default function PostForm({ mode, post }: PostFormProps) {
 
       if (!res.ok) {
         setError(data.error || 'Something went wrong')
+        showNotification(data.error || 'Something went wrong', 'error')
         return
       }
 
+      showNotification(
+        mode === 'create' ? 'Article published successfully!' : 'Changes saved successfully!',
+        'success'
+      )
       router.push('/dashboard')
       router.refresh()
     } catch (err) {
       setError('Network error. Please try again.')
+      showNotification('Network error. Please try again.', 'error')
     } finally {
       setLoading(false)
     }
@@ -60,10 +76,12 @@ export default function PostForm({ mode, post }: PostFormProps) {
     setDeleting(true)
     try {
       await fetch(`/api/posts/${post!.id}`, { method: 'DELETE' })
+      showNotification('Article deleted successfully!', 'success')
       router.push('/dashboard')
       router.refresh()
     } catch {
       setError('Failed to delete post')
+      showNotification('Failed to delete post', 'error')
       setDeleting(false)
     }
   }
@@ -115,7 +133,7 @@ export default function PostForm({ mode, post }: PostFormProps) {
             style={{ width: '40px', height: '22px' }}
           >
             <span
-              className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${isPremium ? 'translate-x-4.5' : ''}`}
+              className={"absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform" }
               style={{ transform: isPremium ? 'translateX(18px)' : 'translateX(0)' }}
             />
           </button>
@@ -133,7 +151,7 @@ export default function PostForm({ mode, post }: PostFormProps) {
             style={{ width: '40px', height: '22px', background: published ? '#111827' : '#D1D5DB' }}
           >
             <span
-              className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform"
+              className={"absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform" }
               style={{ transform: published ? 'translateX(18px)' : 'translateX(0)' }}
             />
           </button>
@@ -148,19 +166,19 @@ export default function PostForm({ mode, post }: PostFormProps) {
       )}
 
       {/* Actions */}
-      <div className="flex items-center justify-between pt-2">
-        <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-2">
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <button
             type="submit"
             disabled={loading}
-            className="bg-gray-900 text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full sm:w-auto bg-gray-900 text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Saving…' : mode === 'create' ? 'Publish article' : 'Save changes'}
           </button>
           <button
             type="button"
             onClick={() => router.push('/dashboard')}
-            className="border border-gray-300 text-gray-700 px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors"
+            className="w-full sm:w-auto border border-gray-300 text-gray-700 px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors text-center"
           >
             Cancel
           </button>
@@ -171,7 +189,7 @@ export default function PostForm({ mode, post }: PostFormProps) {
             type="button"
             onClick={handleDelete}
             disabled={deleting}
-            className="text-red-500 hover:text-red-700 text-sm font-medium transition-colors disabled:opacity-50"
+            className="w-full sm:w-auto text-center sm:text-right text-red-500 hover:text-red-700 text-sm font-medium transition-colors disabled:opacity-50 py-2 sm:py-0"
           >
             {deleting ? 'Deleting…' : 'Delete post'}
           </button>

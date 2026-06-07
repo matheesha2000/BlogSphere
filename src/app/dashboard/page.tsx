@@ -10,7 +10,7 @@ export default async function DashboardPage() {
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  if (!user) redirect('/auth/login')
 
   const { data: posts } = await supabase
     .from('posts')
@@ -75,7 +75,7 @@ export default async function DashboardPage() {
           </div>
 
           {/* Stat cards */}
-          <div className="grid grid-cols-3 gap-4 mt-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
             {[
               { label: 'Published', value: publishedCount, color: 'from-green-500 to-emerald-400' },
               { label: 'Drafts',    value: draftCount,     color: 'from-amber-500 to-orange-400' },
@@ -168,10 +168,10 @@ export default async function DashboardPage() {
               {(posts ?? [] as Post[]).map((post, i) => (
                 <div
                   key={post.id}
-                  className="animate-fade-up group bg-white rounded-2xl border border-gray-100 p-5 flex items-center justify-between gap-4 hover:border-gray-200 hover:shadow-md transition-all duration-200"
+                  className="animate-fade-up group bg-white rounded-2xl border border-gray-100 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-gray-200 hover:shadow-md transition-all duration-200"
                   style={{ animationDelay: `${i * 60}ms` }}
                 >
-                  <div className="min-w-0 flex-1">
+                  <div className="min-w-0 flex-1 w-full">
                     {/* Badges */}
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                       {post.is_premium && (
@@ -199,7 +199,7 @@ export default async function DashboardPage() {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex gap-2 shrink-0">
+                  <div className="flex gap-2 shrink-0 w-full sm:w-auto justify-end border-t border-gray-50 pt-3 sm:border-0 sm:pt-0">
                     <Link href={`/posts/${post.slug}`}>
                       <button className="text-xs text-gray-500 hover:text-gray-900 border border-gray-200 hover:border-gray-300 px-3 py-1.5 rounded-lg transition-all cursor-pointer hover:bg-gray-50">
                         View

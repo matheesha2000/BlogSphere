@@ -4,20 +4,24 @@ import { useState } from 'react'
 import { useUser } from '@/hooks/useUserhook/useUser'
 import { useSubscription } from '@/hooks/useSubscription'
 import { useRouter } from 'next/navigation'
+import { useNotification } from '@/components/providers/NotificationProvider'
 
 export default function SubscribePage() {
   const { user } = useUser()
   const { isSubscribed } = useSubscription()
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const { showNotification } = useNotification()
 
   const handleSubscribe = async () => {
     if (!user) {
-      router.push('/login?redirectTo=/subscribe')
+      showNotification('Please log in to subscribe.', 'info')
+      router.push('/auth/login?redirectTo=/subscribe')
       return
     }
 
     setLoading(true)
+    showNotification('Redirecting to Stripe checkout...', 'info', 3000)
     try {
       const res = await fetch('/api/checkout', { method: 'POST' })
       const data = await res.json()
@@ -25,10 +29,10 @@ export default function SubscribePage() {
       if (data.url) {
         window.location.href = data.url
       } else {
-        alert('Something went wrong. Please try again.')
+        showNotification('Something went wrong. Please try again.', 'error')
       }
     } catch (err) {
-      alert('Something went wrong. Please try again.')
+      showNotification('Something went wrong. Please try again.', 'error')
     } finally {
       setLoading(false)
     }
