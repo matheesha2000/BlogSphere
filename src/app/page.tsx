@@ -9,16 +9,11 @@ interface Post {
   title: string
   content: string
   created_at: string
-  published: boolean
-  profiles?: {
-    id: string
-    email: string
-    full_name: string
-  }
+  author_name?: string | null
 }
 
 interface HomePageProps {
-  searchParams: { q?: string }
+  searchParams: Promise<{ q?: string }>
 }
 
 // ── Stats data ──────────────────────────────────────────
@@ -79,12 +74,13 @@ const FEATURES = [
 
 export default async function HomePage({ searchParams }: HomePageProps) {
   const supabase = await createClient()
-  const query = searchParams.q ?? ''
+  const { q } = await searchParams
+  const query = q ?? ''
 
-  // Try with published filter; fall back to all posts if column doesn't exist yet
+  // Fetch posts including user_id for author resolution
   let dbQuery = supabase
     .from('posts')
-    .select('*, profiles(id, email, full_name)')
+    .select('id, slug, title, content, excerpt, is_premium, user_id, author_name, created_at')
     .order('created_at', { ascending: false })
     .limit(12)
 
@@ -101,6 +97,21 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     posts = fallback.data
     error  = fallback.error
   }
+
+  // Fallback: zero rows with no error — published filter blocking
+  if (!error && (!posts || posts.length === 0)) {
+    const { data: anyPosts } = await supabase
+      .from('posts')
+      .select('id, slug, title, content, excerpt, is_premium, user_id, author_name, created_at')
+      .order('created_at', { ascending: false })
+      .limit(12)
+    if (anyPosts && anyPosts.length > 0) posts = anyPosts
+  }
+
+  const postsWithAuthors = (posts ?? []).map((p) => ({
+    ...p,
+    authorName: p.author_name || 'Anonymous',
+  }))
 
   return (
     <main className="min-h-screen overflow-x-hidden">
@@ -276,12 +287,12 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           {/* Result count */}
           {query && (
             <p className="text-sm text-gray-400 mb-6">
-              Found <strong className="text-gray-700">{posts?.length || 0}</strong>{' '}
-              result{posts?.length !== 1 ? 's' : ''} for &quot;{query}&quot;
+              Found <strong className="text-gray-700">{postsWithAuthors.length || 0}</strong>{' '}
+              result{postsWithAuthors.length !== 1 ? 's' : ''} for &quot;{query}&quot;
             </p>
           )}
 
-          {/* Posts list */}
+          {/* Posts grid */}
           {error ? (
             <div className="flex flex-col items-center justify-center gap-3 py-20 text-gray-400">
               <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -290,9 +301,9 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               </svg>
               <p className="text-sm">Failed to load articles. Please try again later.</p>
             </div>
-          ) : posts && posts.length > 0 ? (
-            <div className="space-y-6">
-              {(posts as Post[]).map((post, i) => (
+          ) : postsWithAuthors.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {postsWithAuthors.map((post, i) => (
                 <div
                   key={post.id}
                   className={`animate-fade-up delay-${Math.min((i + 1) * 100, 600)}`}

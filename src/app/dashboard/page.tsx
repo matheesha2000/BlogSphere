@@ -27,7 +27,8 @@ export default async function DashboardPage() {
   const publishedCount = posts?.filter(p => p.published).length ?? 0
   const draftCount     = posts?.filter(p => !p.published).length ?? 0
   const premiumCount   = posts?.filter(p => p.is_premium).length ?? 0
-  const avatarLetter   = (user.email?.[0] ?? 'U').toUpperCase()
+  const fullName       = user.user_metadata?.full_name || user.email || 'Anonymous'
+  const avatarLetter   = fullName[0].toUpperCase()
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -57,7 +58,7 @@ export default async function DashboardPage() {
                   Welcome back
                 </p>
                 <h1 className="text-white text-xl font-bold truncate max-w-xs">
-                  {user.email}
+                  {fullName}
                 </h1>
               </div>
             </div>

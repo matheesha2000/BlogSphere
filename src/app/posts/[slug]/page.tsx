@@ -13,25 +13,22 @@ interface Post {
   content?: string | null
   is_premium: boolean
   published: boolean
+  user_id?: string
   created_at: string
-  profiles?: {
-    id: string
-    email: string
-    full_name: string | null
-  }
 }
 
 interface PostPageProps {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export async function generateMetadata({ params }: PostPageProps) {
+  const { slug } = await params
   const supabase = await createClient()
 
   const { data: post } = await supabase
     .from('posts')
     .select('title, excerpt, content')
-    .eq('slug', params.slug)
+    .eq('slug', slug)
     .single()
 
   if (!post) {
@@ -47,38 +44,33 @@ export async function generateMetadata({ params }: PostPageProps) {
 }
 
 export default async function PostPage({ params }: PostPageProps) {
+  const { slug } = await params
   const supabase = await createClient()
 
-  const dbQuery = supabase
-    .from('posts')
-    .select('*, profiles(id, email, full_name)')
-    .eq('slug', params.slug)
-
-  // First attempt: with published filter
-  const {
-    data: initialPost,
-    error,
-  } = await dbQuery.eq('published', true).single()
-
-  let post = initialPost
-
-  // If 'published' column is missing, retry without filter
-  if (error?.code === 'PGRST204' || error?.message?.includes('published')) {
-    const fallback = await dbQuery.single()
-    post = fallback.data
-  }
-
-  if (!post) {
-    notFound()
-  }
-
+  // Get current user so we can enforce draft access control
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
+  // Fetch the post by slug — no published filter so we always find the row
+  const { data: finalPost } = await supabase
+    .from('posts')
+    .select('id, slug, title, content, excerpt, created_at, is_premium, published, user_id, author_name')
+    .eq('slug', slug)
+    .maybeSingle()
+
+  if (!finalPost) {
+    notFound()
+  }
+
+  // Access control: drafts are only visible to the post author
+  if (!finalPost.published && finalPost.user_id !== user?.id) {
+    notFound()
+  }
+
   let isSubscribed = false
 
-  if (user && post.is_premium) {
+  if (user && finalPost.is_premium) {
     const { data: sub } = await supabase
       .from('subscriptions')
       .select('status')
@@ -89,13 +81,18 @@ export default async function PostPage({ params }: PostPageProps) {
     isSubscribed = !!sub
   }
 
-  const typedPost = post as Post
-  const author =
-    typedPost.profiles?.full_name ||
-    typedPost.profiles?.email ||
-    'Anonymous'
+  const typedPost = finalPost as Post & { author_name?: string | null }
 
-  const avatarLetter = author[0].toUpperCase()
+  // Use the author_name directly from the posts table, or fallback to 'Anonymous' if missing
+  let resolvedAuthorName = typedPost.author_name || null
+
+  // Optional: If the post lacks an author_name but is owned by the current viewer, we could still fall back to their session name, but we assume author_name is backfilled.
+  if (!resolvedAuthorName && user && typedPost.user_id === user.id) {
+    resolvedAuthorName = user.user_metadata?.full_name || user.email || null
+  }
+
+  const author = resolvedAuthorName && resolvedAuthorName !== 'Anonymous' ? resolvedAuthorName : null
+  const avatarLetter = author ? author[0].toUpperCase() : null
   const readTime = readingTime(typedPost.content ?? '')
 
   return (
@@ -147,19 +144,26 @@ export default async function PostPage({ params }: PostPageProps) {
 
           {/* Author + date row */}
           <div className="animate-fade-up delay-300 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
-              {avatarLetter}
-            </div>
-
-            <div>
-              <p className="text-sm font-medium text-gray-900">
-                {author}
-              </p>
-
-              <p className="text-xs text-gray-400">
+            {author && (
+              <>
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
+                  {avatarLetter}
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900">
+                    {author}
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    <time>{formatDate(typedPost.created_at)}</time>
+                  </p>
+                </div>
+              </>
+            )}
+            {!author && (
+              <p className="text-sm text-gray-400">
                 <time>{formatDate(typedPost.created_at)}</time>
               </p>
-            </div>
+            )}
           </div>
         </div>
       </div>

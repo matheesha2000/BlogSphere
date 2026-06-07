@@ -7,6 +7,7 @@ import { useUser } from '@/hooks/useUserhook/useUser'
 import { createClient } from '@/lib/supabase/client'
 
 const NAV_LINKS = [
+  { label: 'Home', href: '/' },
   { label: 'Articles', href: '/posts' },
   { label: 'Premium', href: '/subscribe' },
 ]
