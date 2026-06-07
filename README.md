@@ -4,7 +4,7 @@ A full-stack blog publication application built with **Next.js 14**, **Supabase*
 
 ## 🌐 Live Demo
 
-> **Live URL:** https://your-app.vercel.app ← _Replace with your Vercel URL after deployment_
+> **Live URL:** https://blog-sphere-ochre.vercel.app/ 
 
 ---
 
@@ -31,7 +31,7 @@ A full-stack blog publication application built with **Next.js 14**, **Supabase*
 - Dashboard showing all your articles and subscription status
 
 ### Premium Subscription
-- $9/month subscription via **Stripe Checkout**
+- $10/month subscription via **Stripe Checkout**
 - Webhook-powered subscription activation
 - Premium articles unlock instantly after payment
 - Subscription status shown in dashboard
@@ -131,8 +131,8 @@ blog-app/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
-cd YOUR_REPO_NAME
+git clone https://github.com/matheesha2000/BlogSphere.git
+cd BlogSphere
 ```
 
 ### 2. Install dependencies
@@ -196,6 +196,7 @@ Visit [http://localhost:3000](http://localhost:3000) 🎉
 NEXT_PUBLIC_SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOi...
 SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOi...       # Never expose to browser
+
 
 # Stripe — Developers → API Keys
 STRIPE_SECRET_KEY=sk_test_xxx                  # Never expose to browser
@@ -275,7 +276,7 @@ Use these test card details — never a real card:
 After deploying, go to **Stripe → Developers → Webhooks → Add endpoint**:
 
 ```
-URL:    https://your-app.vercel.app/api/webhooks/stripe
+URL:    https://blog-sphere.vercel.app/api/webhooks/stripe
 Events: checkout.session.completed
         customer.subscription.updated
         customer.subscription.deleted
@@ -316,7 +317,7 @@ Copy the new signing secret and update `STRIPE_WEBHOOK_SECRET` in Vercel environ
 ## 👤 Author
 
 **Your Name Here**
-GitHub: [@yourusername](https://github.com/yourusername)
+GitHub: [@matheesha2000](https://github.com/matheesha2000)
 
 ---
 
