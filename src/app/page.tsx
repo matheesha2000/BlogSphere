@@ -82,7 +82,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     .from('posts')
     .select('id, slug, title, content, excerpt, is_premium, user_id, author_name, created_at')
     .order('created_at', { ascending: false })
-    .limit(12)
+    .limit(3)
 
   if (query) {
     dbQuery = dbQuery.or(`title.ilike.%${query}%,content.ilike.%${query}%`)
@@ -104,7 +104,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       .from('posts')
       .select('id, slug, title, content, excerpt, is_premium, user_id, author_name, created_at')
       .order('created_at', { ascending: false })
-      .limit(12)
+      .limit(3)
     if (anyPosts && anyPosts.length > 0) posts = anyPosts
   }
 

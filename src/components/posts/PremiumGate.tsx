@@ -29,18 +29,18 @@ export default function PremiumGate({ content }: PremiumGateProps) {
           This is a premium article
         </h3>
         <p className="text-gray-500 text-sm mb-6 max-w-sm mx-auto">
-          Subscribe to unlock this article and all future premium content for just $9/month.
+          Subscribe to unlock this article and all future premium content for just $10/month.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
             href="/subscribe"
-            className="bg-gray-900 text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-700 transition-colors"
+            className="bg-gray-900 !text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-700 transition-colors"
           >
-            Subscribe — $9/month
+            Subscribe — $10/month
           </Link>
           <Link
-            href="/login"
-            className="border border-gray-300 text-gray-700 px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors"
+            href="/auth/login"
+            className="border border-gray-300 !text-gray-700 px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors"
           >
             Log in if subscribed
           </Link>

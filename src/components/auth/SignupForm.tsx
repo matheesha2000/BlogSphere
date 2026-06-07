@@ -5,8 +5,11 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { useNotification } from '@/components/providers/NotificationProvider'
 
 export default function SignupForm() {
+  const { showNotification } = useNotification()
+
   // Form fields
   const [fullName, setFullName] = useState('')
   const [email, setEmail]       = useState('')
@@ -45,10 +48,12 @@ export default function SignupForm() {
     // Client-side validation
     if (password.length < 6) {
       setError('Password must be at least 6 characters')
+      showNotification('Password must be at least 6 characters', 'warning')
       return
     }
     if (password !== confirmPw) {
       setError('Passwords do not match')
+      showNotification('Passwords do not match', 'warning')
       return
     }
 
@@ -64,6 +69,7 @@ export default function SignupForm() {
 
       if (!res.ok) {
         setError(data.error || 'Something went wrong during signup')
+        showNotification(data.error || 'Something went wrong during signup', 'error')
         setLoading(false)
         return
       }
@@ -76,14 +82,19 @@ export default function SignupForm() {
 
       if (signInError) {
         setError(signInError.message)
+        showNotification(signInError.message, 'error')
         setLoading(false)
         return
       }
 
-      router.push('/dashboard')
-      router.refresh()
+      showNotification('Account created successfully! Redirecting to dashboard...', 'success')
+      setTimeout(() => {
+        router.push('/dashboard')
+        router.refresh()
+      }, 3000)
     } catch (err: any) {
       setError(err.message || 'An unexpected error occurred')
+      showNotification(err.message || 'An unexpected error occurred', 'error')
       setLoading(false)
     }
     return

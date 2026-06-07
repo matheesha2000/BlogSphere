@@ -173,7 +173,7 @@ export default async function PostPage({ params }: PostPageProps) {
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
           {/* Excerpt banner */}
           {typedPost.excerpt && (
-            <div className="px-8 py-5 border-b border-gray-100 bg-blue-50/40">
+            <div className="px-4 py-4 sm:px-8 sm:py-5 border-b border-gray-100 bg-blue-50/40">
               <p className="text-gray-600 text-base leading-relaxed italic">
                 {typedPost.excerpt}
               </p>
@@ -181,7 +181,7 @@ export default async function PostPage({ params }: PostPageProps) {
           )}
 
           {/* Content */}
-          <div className="px-8 py-8">
+          <div className="px-4 py-6 sm:px-8 sm:py-8">
             {typedPost.is_premium && !isSubscribed ? (
               <PremiumGate content={typedPost.content ?? ''} />
             ) : (
