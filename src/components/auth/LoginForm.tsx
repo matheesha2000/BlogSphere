@@ -45,7 +45,7 @@ export default function LoginForm() {
 
       {/* Email field */}
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
+        <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
           Email address
         </label>
         <input
@@ -56,23 +56,23 @@ export default function LoginForm() {
           placeholder="you@example.com"
           required
           autoComplete="off"
-          className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm
-                     text-gray-900 placeholder-gray-400 bg-white
-                     focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent
-                     transition-shadow"
+          className="w-full border border-white/10 rounded-xl px-4 py-3 text-sm
+                     text-white placeholder-gray-500 bg-white/5
+                     focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500
+                     transition-all duration-200"
         />
       </div>
 
       {/* Password field with show/hide toggle */}
       <div>
-        <div className="flex items-center justify-between mb-1.5">
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+        <div className="flex items-center justify-between mb-2">
+          <label htmlFor="password" className="block text-sm font-medium text-gray-300">
             Password
           </label>
-          {/* Forgot password link — wire up later if needed */}
+          {/* Forgot password link */}
           <button
             type="button"
-            className="text-xs text-gray-400 hover:text-gray-700 transition-colors"
+            className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
             tabIndex={-1}
           >
             Forgot password?
@@ -88,10 +88,10 @@ export default function LoginForm() {
             placeholder="••••••••"
             required
             autoComplete="new-password"
-            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm
-                       text-gray-900 placeholder-gray-400 bg-white
-                       focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent
-                       transition-shadow"
+            className="w-full border border-white/10 rounded-xl px-4 py-3 pr-10 text-sm
+                       text-white placeholder-gray-500 bg-white/5
+                       focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500
+                       transition-all duration-200"
           />
           {/* Show / hide password button */}
           <button
@@ -144,8 +144,8 @@ export default function LoginForm() {
 
       {/* Error message */}
       {error && (
-        <div className="flex items-start gap-2.5 bg-red-50 border border-red-200
-                        text-red-700 text-sm px-4 py-3 rounded-xl">
+        <div className="flex items-start gap-2.5 bg-red-500/10 border border-red-500/20
+                        text-red-400 text-sm px-4 py-3 rounded-xl animate-fade-up">
           <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
               d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -158,11 +158,11 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-gray-900 text-white py-2.5 rounded-xl text-sm font-medium
-                   hover:bg-gray-700 active:bg-gray-800
-                   transition-colors duration-150
-                   disabled:opacity-50 disabled:cursor-not-allowed
-                   flex items-center justify-center gap-2"
+        className="w-full bg-gradient-to-r from-blue-600 to-violet-600 text-white py-3 rounded-xl text-sm font-semibold
+                   shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-0.5 active:translate-y-0
+                   transition-all duration-200
+                   disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:-translate-y-0
+                   flex items-center justify-center gap-2 mt-4"
       >
         {loading && (
           <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">

@@ -90,16 +90,16 @@ export default async function SubscribeSuccessPage({ searchParams }: PageProps) 
       <p className="text-gray-500 mb-8">
         Your subscription is now active. Enjoy unlimited access to all premium content.
       </p>
-      <div className="flex gap-3 justify-center">
+      <div className="flex gap-4 justify-center mt-8">
         <Link
           href="/posts"
-          className="bg-gray-900 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-700 transition-colors"
+          className="inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-violet-600 text-white px-6 py-3 rounded-xl text-sm font-semibold shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
         >
           Browse posts
         </Link>
         <Link
           href="/dashboard"
-          className="border border-gray-300 text-gray-700 px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors"
+          className="inline-flex items-center justify-center border border-white/10 bg-white/5 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-white/10 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
         >
           Go to dashboard
         </Link>
@@ -116,7 +116,7 @@ function ErrorUI({ message }: { message: string }) {
       <p className="text-gray-500 mb-8">{message}</p>
       <Link
         href="/subscribe"
-        className="bg-gray-900 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-700 transition-colors"
+        className="inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-violet-600 text-white px-6 py-3 rounded-xl text-sm font-semibold shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 mt-4"
       >
         Back to subscribe
       </Link>

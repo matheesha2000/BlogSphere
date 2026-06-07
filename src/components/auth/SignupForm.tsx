@@ -54,24 +54,38 @@ export default function SignupForm() {
 
     setLoading(true)
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { full_name: fullName },
-      },
-    })
+    try {
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, fullName }),
+      })
+      const data = await res.json()
 
-    if (error) {
-      setError(error.message)
+      if (!res.ok) {
+        setError(data.error || 'Something went wrong during signup')
+        setLoading(false)
+        return
+      }
+
+      // Automatically sign them in since their account is created and auto-confirmed
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+
+      if (signInError) {
+        setError(signInError.message)
+        setLoading(false)
+        return
+      }
+
+      router.push('/dashboard')
+      router.refresh()
+    } catch (err: any) {
+      setError(err.message || 'An unexpected error occurred')
       setLoading(false)
-      return
     }
-
-    // Redirect to dashboard regardless; if the server requires email confirmation
-    // the dashboard should handle unauthenticated users and redirect back to login.
-    router.push('/dashboard')
-    router.refresh()
     return
   }
 
@@ -81,8 +95,8 @@ export default function SignupForm() {
 
       {/* Full name */}
       <div>
-        <label htmlFor="full-name" className="block text-sm font-medium text-gray-700 mb-1.5">
-          Full name <span className="text-gray-400 font-normal">(optional)</span>
+        <label htmlFor="full-name" className="block text-sm font-medium text-gray-300 mb-2">
+          Full name <span className="text-gray-500 font-normal">(optional)</span>
         </label>
         <input
           id="full-name"
@@ -92,16 +106,16 @@ export default function SignupForm() {
           placeholder="Jane Smith"
           autoComplete="name"
           autoFocus
-          className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm
-                     text-gray-900 placeholder-gray-400 bg-white
-                     focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent
-                     transition-shadow"
+          className="w-full border border-white/10 rounded-xl px-4 py-3 text-sm
+                     text-white placeholder-gray-500 bg-white/5
+                     focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500
+                     transition-all duration-200"
         />
       </div>
 
       {/* Email */}
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
+        <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
           Email address
         </label>
         <input
@@ -112,16 +126,16 @@ export default function SignupForm() {
           placeholder="you@example.com"
           required
           autoComplete="email"
-          className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm
-                     text-gray-900 placeholder-gray-400 bg-white
-                     focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent
-                     transition-shadow"
+          className="w-full border border-white/10 rounded-xl px-4 py-3 text-sm
+                     text-white placeholder-gray-500 bg-white/5
+                     focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500
+                     transition-all duration-200"
         />
       </div>
 
       {/* Password + strength bar */}
       <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1.5">
+        <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
           Password
         </label>
         <div className="relative">
@@ -133,10 +147,10 @@ export default function SignupForm() {
             placeholder="At least 6 characters"
             required
             autoComplete="new-password"
-            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm
-                       text-gray-900 placeholder-gray-400 bg-white
-                       focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent
-                       transition-shadow"
+            className="w-full border border-white/10 rounded-xl px-4 py-3 pr-10 text-sm
+                       text-white placeholder-gray-500 bg-white/5
+                       focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500
+                       transition-all duration-200"
           />
           <button
             type="button"
@@ -211,7 +225,7 @@ export default function SignupForm() {
 
       {/* Confirm password */}
       <div>
-        <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 mb-1.5">
+        <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-300 mb-2">
           Confirm password
         </label>
         <input
@@ -222,24 +236,24 @@ export default function SignupForm() {
           placeholder="Repeat your password"
           required
           autoComplete="new-password"
-          className={`w-full border rounded-xl px-4 py-2.5 text-sm bg-white
-                      text-gray-900 placeholder-gray-400
-                      focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent
-                      transition-shadow ${
+          className={`w-full border rounded-xl px-4 py-3 text-sm
+                      text-white placeholder-gray-500 bg-white/5
+                      focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500
+                      transition-all duration-200 ${
                         confirmPw && confirmPw !== password
-                          ? 'border-red-300 bg-red-50'
-                          : 'border-gray-200'
+                          ? 'border-red-500/50 bg-red-500/10 focus:ring-red-500/50 focus:border-red-500'
+                          : 'border-white/10'
                       }`}
         />
         {confirmPw && confirmPw !== password && (
-          <p className="text-xs text-red-500 mt-1">Passwords don&apos;t match</p>
+          <p className="text-xs text-red-400 mt-2">Passwords don&apos;t match</p>
         )}
       </div>
 
       {/* Error banner */}
       {error && (
-        <div className="flex items-start gap-2.5 bg-red-50 border border-red-200
-                        text-red-700 text-sm px-4 py-3 rounded-xl">
+        <div className="flex items-start gap-2.5 bg-red-500/10 border border-red-500/20
+                        text-red-400 text-sm px-4 py-3 rounded-xl animate-fade-up">
           <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
               d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -252,11 +266,11 @@ export default function SignupForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-gray-900 text-white py-2.5 rounded-xl text-sm font-medium
-                   hover:bg-gray-700 active:bg-gray-800
-                   transition-colors duration-150
-                   disabled:opacity-50 disabled:cursor-not-allowed
-                   flex items-center justify-center gap-2"
+        className="w-full bg-gradient-to-r from-blue-600 to-violet-600 text-white py-3 rounded-xl text-sm font-semibold
+                   shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-0.5 active:translate-y-0
+                   transition-all duration-200
+                   disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:-translate-y-0
+                   flex items-center justify-center gap-2 mt-4"
       >
         {loading && (
           <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
