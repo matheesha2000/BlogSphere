@@ -6,7 +6,7 @@ export interface Profile {
   full_name?: string | null
 }
 
-/** Matches the shape returned by Supabase and consumed by PostCard */
+/** Matches the shape returned by Supabase and consumed by PostCard / PostList */
 export interface Post {
   id?: string
   slug: string
@@ -15,6 +15,7 @@ export interface Post {
   content?: string | null
   is_premium?: boolean | null
   published?: boolean
+  user_id?: string
+  author_name?: string | null
   created_at: string
-  profiles?: Profile | null
 }

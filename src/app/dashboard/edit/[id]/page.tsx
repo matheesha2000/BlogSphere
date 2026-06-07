@@ -5,9 +5,9 @@ import Link from 'next/link'
 import type { Post } from '@/types'
 
 interface EditPostPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export const metadata = {
@@ -18,6 +18,7 @@ export default async function EditPostPage({
   params,
 }: EditPostPageProps) {
   const supabase = await createClient()
+  const { id } = await params
 
   const {
     data: { user },
@@ -30,9 +31,9 @@ export default async function EditPostPage({
   const { data: post } = await supabase
     .from('posts')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .eq('user_id', user.id)
-    .single()
+    .maybeSingle()
 
   if (!post) {
     notFound()

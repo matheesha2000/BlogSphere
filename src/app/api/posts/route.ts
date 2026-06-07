@@ -22,7 +22,7 @@ export async function GET(request: Request) {
   // Try with published filter first; fall back to all posts if column missing
   let dbQuery = supabase
     .from('posts')
-    .select('*, profiles(id, email, full_name)')
+    .select('id, slug, title, content, excerpt, is_premium, published, user_id, created_at')
     .order('created_at', { ascending: false })
 
   // Only add .eq('published', true) — if the column doesn't exist yet,
@@ -102,6 +102,12 @@ export async function POST(request: Request) {
     .from('posts').select('is_premium').limit(1)
   if (!premColError) {
     insertPayload.is_premium = typeof is_premium === 'boolean' ? is_premium : false
+  }
+
+  const { error: authorNameColError } = await supabase
+    .from('posts').select('author_name').limit(1)
+  if (!authorNameColError) {
+    insertPayload.author_name = user.user_metadata?.full_name || user.email || 'Anonymous'
   }
 
   const { data, error } = await supabase
